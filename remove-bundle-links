@@ -1,0 +1,9 @@
+#!/bin/bash
+# remove-bundle-links
+# A very simple script to delete the files update-bundle-links creates.
+home=~
+for file in ~/.cinstall/cache/*; do
+  rm -f "$home/.local/share/applications/$(echo $(basename $file) | sed 's/\(\w*\)-.*/\1/').desktop"
+done; for file in ~/.cinstall/launchers/*; do
+  rm -f "$home/.cinstall/launchers/$(echo $(basename $file) | sed 's/\(\w*\)-.*/\1/')"
+done

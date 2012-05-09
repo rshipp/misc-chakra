@@ -1,0 +1,15 @@
+#!/bin/bash
+# update-bundle-links
+# A simple script to make Chakra bundles a little easier to use by generating
+# and/or updating some files in ~/.cinstall and ~/.local/share/applications.
+home=~
+for file in ~/.cinstall/cache/*; do
+  rm -f "$home/.local/share/applications/$(echo $(basename $file) | sed 's/\(\w*\)-.*/\1/').desktop"
+done; for file in ~/.cinstall/launchers/*; do
+  rm -f "$home/.cinstall/launchers/$(echo $(basename $file) | sed 's/\(\w*\)-.*/\1/')"
+done
+for file in ~/.cinstall/cache/*; do
+  cp -f "$file" "$home/.local/share/applications/$(echo $(basename $file) | sed 's/\(\w*\)-.*/\1/').desktop"
+done; for file in ~/.cinstall/launchers/*; do
+  cp -f "$file" "$home/.cinstall/launchers/$(echo $(basename $file) | sed 's/\(\w*\)-.*/\1/')"
+done

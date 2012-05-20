@@ -1,0 +1,10 @@
+#!/bin/bash
+IFS='
+'
+for field in $(LC_ALL=C pacman -Qi | grep -E '(^Name\s|^Installed\sSize\s)'); do 
+  if echo $field | grep -q '^Name '; then 
+    name=$(echo $field | sed 's/^Name\s*:\s//')
+  elif echo $field | grep -q '^Installed Size '; then 
+    echo "$(echo $field | sed 's/^Installed\sSize\s*:\s//; s/\s//g')	$name"
+  fi
+done

@@ -1,0 +1,17 @@
+#!/bin/bash
+IFS=$'\n' ccrdups=0
+for pkg in $(ccr -Ss %% --ccronly | grep '^ccr/.*' | sed 's,^ccr/,,' | sort); do
+  pkgname=$(sed 's/^\([^ ]*\) .*/\1/' <<< "$pkg")
+  ccrver=$(sed 's/^[^ ]* \(.*\)$/\1/' <<< "$pkg")
+  if (pacman -Ssq $pkgname | grep -q ^$pkgname$); then
+    repover=$(LC_ALL=C pacman -Ss ^$pkgname$ | head -1 | sed 's,[^ ]*/[^ ]* \(.*\)$,\1,; s/^\([^ ]*\) .*/\1/')
+    echo -e "\e[1;34m$pkgname\e[0m is a duplicate! It exists in both the CCR and [\e[1;34m$(LC_ALL=C pacman -Ss ^$pkgname$ | head -1 | sed 's,\([^ ]*\)/.*,\1,')\e[0m]"
+    echo -n "  The version in CCR is $ccrver; the version in the repos is $repover "
+    [[ $repover > $ccrver ]] && echo -e "(CCR package is \e[1;31molder\e[0m)"
+    [[ $repover == $ccrver ]] && echo -e "(Both are the \e[1;31msame\e[0m)"
+    [[ $repover < $ccrver ]] && echo -e "(CCR package is \e[1;31mnewer\e[0m)"
+    let ccrdups=$ccrdups+1
+  fi
+done
+echo >&2
+echo "Total duplicates: $ccrdups" >&2

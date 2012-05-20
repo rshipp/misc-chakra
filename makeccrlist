@@ -1,0 +1,7 @@
+#! /bin/bash
+installed=$(LC_ALL=C pacman -Q | sed -e "s|\(.*[^ ]*\) .*|\1|g")
+repos=$(pacman -Ssq)
+for pkg in $installed; do
+  found=$(echo $repos | grep $pkg)
+  [[ -z $found ]] && echo $pkg
+done
